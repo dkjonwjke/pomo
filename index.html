@@ -1,86 +1,161 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Pomodoro & Hedef Takip</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  .container { max-width: 400px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
-  button { padding: 10px 20px; margin-top: 10px; }
-  ul { padding-left: 20px; }
-  li.done { text-decoration: line-through; color: gray; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dopamino: Odaklan</title>
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #d4fc79, #96e6a1);
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 40px auto;
+      background: white;
+      padding: 25px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    #timer {
+      font-size: 48px;
+      text-align: center;
+      margin: 20px 0;
+      color: #2e7d32;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      background-color: #2e7d32;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    li {
+      margin: 8px 0;
+      cursor: pointer;
+    }
+
+    li.done {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 20px;
+        padding: 15px;
+      }
+
+      #timer {
+        font-size: 40px;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>Pomodoro Zamanlayıcı</h1>
-    <div id="timer">25:00</div>
-    <button id="startStopBtn">Başlat</button>
+    <h1>Dopamino</h1>
+    <p style="text-align: center; color: gray; margin-top: -10px;">Odaklan, başla ve hedeflerine ulaş.</p>
 
-    <h2>Günlük Hedefler</h2>
-    <input type="text" id="goalInput" placeholder="Yeni hedef yaz..." />
-    <button onclick="addGoal()">Ekle</button>
+    <div id="timer">25:00</div>
+    <button id="startStopBtn">⏱ Başlat</button>
+
+    <h2>🎯 Hedeflerin</h2>
+    <input type="text" id="goalInput" placeholder="Bugün ne yapacaksın?" />
+    <button onclick="addGoal()">+ Ekle</button>
     <ul id="goalList"></ul>
   </div>
 
-<script>
-  // Pomodoro sayaç
-  let timerMinutes = 25;
-  let timerSeconds = 0;
-  let timerInterval = null;
-  const timerDisplay = document.getElementById('timer');
-  const startStopBtn = document.getElementById('startStopBtn');
+  <script>
+    // Pomodoro sayaç
+    let timerMinutes = 25;
+    let timerSeconds = 0;
+    let timerInterval = null;
+    const timerDisplay = document.getElementById('timer');
+    const startStopBtn = document.getElementById('startStopBtn');
 
-  function updateTimer() {
-    let m = timerMinutes < 10 ? '0' + timerMinutes : timerMinutes;
-    let s = timerSeconds < 10 ? '0' + timerSeconds : timerSeconds;
-    timerDisplay.textContent = m + ':' + s;
-  }
+    function updateTimer() {
+      let m = timerMinutes < 10 ? '0' + timerMinutes : timerMinutes;
+      let s = timerSeconds < 10 ? '0' + timerSeconds : timerSeconds;
+      timerDisplay.textContent = m + ':' + s;
+    }
 
-  function timerTick() {
-    if(timerSeconds === 0){
-      if(timerMinutes === 0){
-        clearInterval(timerInterval);
-        alert('Pomodoro tamamlandı!');
-        startStopBtn.textContent = 'Başlat';
-        timerMinutes = 25;
-        timerSeconds = 0;
-        updateTimer();
-        return;
+    function timerTick() {
+      if(timerSeconds === 0){
+        if(timerMinutes === 0){
+          clearInterval(timerInterval);
+          alert('Tebrikler! Pomodoro tamamlandı 🎉');
+          startStopBtn.textContent = '⏱ Başlat';
+          timerMinutes = 25;
+          timerSeconds = 0;
+          updateTimer();
+          return;
+        }
+        timerMinutes--;
+        timerSeconds = 59;
+      } else {
+        timerSeconds--;
       }
-      timerMinutes--;
-      timerSeconds = 59;
-    } else {
-      timerSeconds--;
+      updateTimer();
     }
-    updateTimer();
-  }
 
-  startStopBtn.onclick = function() {
-    if(timerInterval === null){
-      timerInterval = setInterval(timerTick, 1000);
-      startStopBtn.textContent = 'Durdur';
-    } else {
-      clearInterval(timerInterval);
-      timerInterval = null;
-      startStopBtn.textContent = 'Başlat';
+    startStopBtn.onclick = function() {
+      if(timerInterval === null){
+        timerInterval = setInterval(timerTick, 1000);
+        startStopBtn.textContent = '⏸ Durdur';
+      } else {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        startStopBtn.textContent = '⏱ Başlat';
+      }
     }
-  }
 
-  // Hedef ekleme
-  function addGoal() {
-    const input = document.getElementById('goalInput');
-    const text = input.value.trim();
-    if(!text) return;
+    // Hedef ekleme
+    function addGoal() {
+      const input = document.getElementById('goalInput');
+      const text = input.value.trim();
+      if(!text) return;
 
-    const li = document.createElement('li');
-    li.textContent = text;
-    li.onclick = () => li.classList.toggle('done');
+      const li = document.createElement('li');
+      li.textContent = text;
+      li.onclick = () => li.classList.toggle('done');
 
-    document.getElementById('goalList').appendChild(li);
-    input.value = '';
-  }
-</script>
+      document.getElementById('goalList').appendChild(li);
+      input.value = '';
+    }
+  </script>
 </body>
 </html>
